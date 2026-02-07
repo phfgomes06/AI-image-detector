@@ -13,3 +13,19 @@ def get_spectrum_image(image_path):
 
     return spectrum_final
 
+def get_radial_profile(magnitude_spectrum):
+    rows,cols = magnitude_spectrum.shape
+    cent_x,cent_y = rows // 2, cols // 2
+
+    y, x = np.indices((rows, cols))
+
+    r = np.sqrt((x - cent_x)**2 + (y - cent_y)** 2)
+    r = r.astype(np.int32)
+
+    max_radius = min(cent_x, cent_y)
+    tbin = np.bincount(r.ravel(), magnitude_spectrum.ravel())
+    nr = np.bincount(r.ravel())
+
+    radial_profile = tbin[:max_radius] / nr[:max_radius]
+    
+    return radial_profile
