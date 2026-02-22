@@ -29,3 +29,20 @@ def get_radial_profile(magnitude_spectrum):
     radial_profile = tbin[:max_radius] / nr[:max_radius]
     
     return radial_profile
+
+def gradient_analysis(image_path):
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+    img_blur = cv2.GaussianBlur(img, (3,3), 0)
+    sobel_x = cv2.Sobel(img_blur, cv2.CV_64F, 1, 0, ksize=3)
+    sobel_y = cv2.Sobel(img_blur, cv2.CV_64F, 0, 1, ksize=3)
+
+    magnitude = cv2.magnitude(sobel_x, sobel_y)
+
+    magnitude_normalized = cv2.normalize(magnitude, None, 0, 255, cv2.NORM_MINMAX)
+
+    magnitude_final = np.uint8(magnitude_normalized)
+
+    neon_map = cv2.applyColorMap(magnitude_final, cv2.COLORMAP_JET)
+
+    return magnitude_final, neon_map
